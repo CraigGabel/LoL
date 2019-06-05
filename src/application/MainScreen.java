@@ -1,10 +1,14 @@
 
 package application;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import org.json.simple.parser.ParseException;
+import com.sun.jndi.url.iiopname.iiopnameURLContextFactory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -27,12 +31,16 @@ import javafx.stage.Stage;
 
 public class MainScreen
 {
-	TableView<Champion> table;
-	LinkedList<CheckBox> classFilters;
-	LinkedList<CheckBox> roleFilters;
+	TableView<Champion>		table;
+	LinkedList<CheckBox>	classFilters;
+	LinkedList<CheckBox>	roleFilters;
 
 	MainScreen(Stage mainStage)
 	{
+		table = new TableView<Champion>();
+		classFilters = new LinkedList<>();
+		roleFilters = new LinkedList<>();
+
 		mainStage.setScene(new Scene(buildScreen()));
 		mainStage.show();
 	}
@@ -45,7 +53,7 @@ public class MainScreen
 			{
 				MenuItem mItem = (MenuItem) event.getSource();
 
-				for (ChampionProperties.ChampionSubclass csc: ChampionProperties.ChampionSubclass.values())
+				for (ChampionProperties.ChampionSubclass csc : ChampionProperties.ChampionSubclass.values())
 				{
 					if (csc.name().equals(mItem.getText()))
 					{
@@ -73,7 +81,7 @@ public class MainScreen
 			{
 				MenuItem mItem = (MenuItem) event.getSource();
 
-				for (ChampionProperties.ChampionRole role: ChampionProperties.ChampionRole.values())
+				for (ChampionProperties.ChampionRole role : ChampionProperties.ChampionRole.values())
 				{
 					if (role.name().equals(mItem.getText()))
 					{
@@ -99,24 +107,150 @@ public class MainScreen
 		{
 			public void handle(ActionEvent event)
 			{
-//				MenuItem mItem = (MenuItem) event.getSource();
+				CheckBox checkBox = (CheckBox) event.getSource();
 
 				ArrayList<Champion> chList = new ArrayList<>();
+				ArrayList<Champion> chList2 = new ArrayList<>();
+				ArrayList<Champion> chListTot = new ArrayList<>();
 
-//				ChampionList tempList = new ChampionList();
-
-				for (CheckBox checkBox : classFilters)
+				try
 				{
-//					for (Champion champion : ChampionList.championList)
-//					{
-//						if (champion.championRole.getFirst().equals(mItem.getText()))
-//						{
-//							chList.add(champion);
-//						}
-//					}
+					ChampionList tempList = new ChampionList();
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+				
+				for (CheckBox chb : classFilters)
+				{
+					if (checkBox.equals(chb))
+					{
+						if (chb.getText().equalsIgnoreCase("All"))
+						{
+							if (checkBox.isSelected() == true)
+							{
+								for (CheckBox chb2 : classFilters)
+								{
+									if (chb2.getText().equalsIgnoreCase("All") == false)
+										chb2.setSelected(false);
+								}
+							}
+							else
+							{
+								checkBox.setSelected(true);
+							}
+						}
+						else
+						{
+							classFilters.get(0).setSelected(false);
+						}
+					}
+				}
+				
+				for (CheckBox chb : roleFilters)
+				{
+					if (checkBox.equals(chb))
+					{
+						if (chb.getText().equalsIgnoreCase("All"))
+						{
+							if (checkBox.isSelected() == true)
+							{
+								for (CheckBox chb2 : roleFilters)
+								{
+									if (chb2.getText().equalsIgnoreCase("All") == false)
+										chb2.setSelected(false);
+								}
+							}
+							else
+							{
+								checkBox.setSelected(true);
+							}
+						}
+						else
+						{
+							roleFilters.get(0).setSelected(false);
+						}
+					}
 				}
 
-				table.setItems(FXCollections.observableArrayList(chList));
+				if (classFilters.get(0).isSelected() == true)
+				{
+					// start with a full list
+					for (Champion champion : ChampionList.championList)
+					{
+						if (true)
+						{
+							chList.add(champion);
+						}
+					}
+				}
+				else
+				{
+					for (Champion champion : ChampionList.championList)
+					{
+						for (CheckBox chb : classFilters)
+						{
+							if (chb.isSelected() == true)
+							{
+								for (String scs : champion.championSubclass)
+								{
+									if (scs.equalsIgnoreCase(chb.getText()))
+									{
+										if (chList.contains(champion) == false)
+										{
+											chList.add(champion);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				if (roleFilters.get(0).isSelected() == true)
+				{
+					// start with a full list
+					for (Champion champion : ChampionList.championList)
+					{
+						if (true)
+						{
+							chList2.add(champion);
+						}
+					}
+				}
+				else
+				{
+					for (Champion champion : ChampionList.championList)
+					{
+						for (CheckBox chb : roleFilters)
+						{
+							if (chb.isSelected() == true)
+							{
+								for (String scs : champion.championRole)
+								{
+									if (scs.equalsIgnoreCase(chb.getText()))
+									{
+										if (chList2.contains(champion) == false)
+										{
+											chList2.add(champion);
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				for (Champion champion : chList)
+				{
+					if (chList2.contains(champion))
+					{
+						chListTot.add(champion);
+					}
+				}
+
+				table.setItems(FXCollections.observableArrayList(chListTot));
 			}
 		};
 	}
@@ -136,6 +270,7 @@ public class MainScreen
 		centerPane.getChildren().addAll(championTable(FXCollections.observableArrayList(myList)));
 
 		// left pane - filters
+		// GridPane leftPane = new GridPane();
 		GridPane leftPane = championFilters();
 
 		// main layout
@@ -152,7 +287,7 @@ public class MainScreen
 	{
 		GridPane gridPane = new GridPane();
 
-		gridPane.setPadding(new Insets(20,20,20,20));
+		gridPane.setPadding(new Insets(20, 20, 20, 20));
 		gridPane.setVgap(5);
 		gridPane.setHgap(5);
 
@@ -162,19 +297,42 @@ public class MainScreen
 
 		CheckBox filterCheckBox = new CheckBox();
 		classFilters.add(filterCheckBox);
+		filterCheckBox.setSelected(true);
 		filterCheckBox.setText("All");
 		filterCheckBox.setOnAction(action);
 		GridPane.setConstraints(filterCheckBox, 0, rowIndex++);
 		GridPane.setMargin(filterCheckBox, new Insets(0, 0, 0, 7));
 		gridPane.getChildren().add(filterCheckBox);
 
-		for (ChampionProperties.ChampionSubclass subclass: ChampionProperties.ChampionSubclass.values())
+		for (ChampionProperties.ChampionSubclass subclass : ChampionProperties.ChampionSubclass.values())
 		{
 			filterCheckBox = new CheckBox();
 			classFilters.add(filterCheckBox);
 			filterCheckBox.setText(subclass.name());
 			filterCheckBox.setOnAction(action);
 			GridPane.setConstraints(filterCheckBox, 0, rowIndex++);
+			GridPane.setMargin(filterCheckBox, new Insets(0, 0, 0, 7));
+			gridPane.getChildren().add(filterCheckBox);
+		}
+		
+		rowIndex = 0;
+
+		filterCheckBox = new CheckBox();
+		roleFilters.add(filterCheckBox);
+		filterCheckBox.setSelected(true);
+		filterCheckBox.setText("All");
+		filterCheckBox.setOnAction(action);
+		GridPane.setConstraints(filterCheckBox, 1, rowIndex++);
+		GridPane.setMargin(filterCheckBox, new Insets(0, 0, 0, 7));
+		gridPane.getChildren().add(filterCheckBox);
+
+		for (ChampionProperties.ChampionRole role : ChampionProperties.ChampionRole.values())
+		{
+			filterCheckBox = new CheckBox();
+			roleFilters.add(filterCheckBox);
+			filterCheckBox.setText(role.name());
+			filterCheckBox.setOnAction(action);
+			GridPane.setConstraints(filterCheckBox, 1, rowIndex++);
 			GridPane.setMargin(filterCheckBox, new Insets(0, 0, 0, 7));
 			gridPane.getChildren().add(filterCheckBox);
 		}
@@ -200,7 +358,7 @@ public class MainScreen
 
 		// Set Sort type for userName column
 		chName.setSortType(TableColumn.SortType.DESCENDING);
-//		lastNameCol.setSortable(false);
+		// lastNameCol.setSortable(false);
 
 		// Display row data
 		table.setItems(chList);
