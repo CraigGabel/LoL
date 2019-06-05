@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane prefHeight="300.0" prefWidth="600.0"
+	xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="application.TestController">
+	<children>
+		<Label fx:id="label1" layoutX="409.0" layoutY="50.0"
+			text="Testing" />
+		<Label fx:id="label2" layoutX="406.0" layoutY="87.0"
+			text="Testing2" />
+		<MenuBar layoutY="2.0">
+			<menus>
+				<Menu mnemonicParsing="false" text="File">
+					<items>
+						<MenuItem mnemonicParsing="false" text="Close" />
+					</items>
+				</Menu>
+				<Menu mnemonicParsing="false" text="Class/Subclass">
+					<items>
+						<Menu mnemonicParsing="false" text="Tanks">
+							<items>
+								<MenuItem mnemonicParsing="false" text="Vanguards" />
+								<MenuItem mnemonicParsing="false" text="Wardens" />
+							</items>
+						</Menu>
+						<Menu mnemonicParsing="false" text="Fighters">
+							<items>
+								<MenuItem mnemonicParsing="false" text="Juggernauts" />
+								<MenuItem mnemonicParsing="false" text="Divers" />
+							</items>
+						</Menu>
+						<Menu mnemonicParsing="false" text="Slayers">
+							<items>
+								<MenuItem mnemonicParsing="false" text="Assassins" />
+								<MenuItem mnemonicParsing="false" text="Skirmishers" />
+							</items>
+						</Menu>
+						<Menu mnemonicParsing="false" text="Mages">
+							<items>
+								<MenuItem mnemonicParsing="false" text="Burst Mages" />
+								<MenuItem mnemonicParsing="false" text="Battle Mages" />
+								<MenuItem mnemonicParsing="false" text="Artillery" />
+							</items>
+						</Menu>
+						<Menu mnemonicParsing="false" text="Controllers">
+							<items>
+								<MenuItem mnemonicParsing="false" text="Enchanters" />
+								<MenuItem mnemonicParsing="false" text="Catchers" />
+							</items>
+						</Menu>
+						<Menu mnemonicParsing="false" text="Marksmen">
+							<items>
+								<MenuItem mnemonicParsing="false" text="Marksmen" />
+							</items>
+						</Menu>
+						<Menu mnemonicParsing="false" text="Unique">
+							<items>
+								<MenuItem mnemonicParsing="false" text="Unique" />
+							</items>
+						</Menu>
+					</items>
+				</Menu>
+				<Menu mnemonicParsing="false" text="Roles">
+					<items>
+						<MenuItem mnemonicParsing="false" text="Top" />
+						<MenuItem mnemonicParsing="false" text="Jungle" />
+						<MenuItem mnemonicParsing="false" text="Mid" />
+						<MenuItem mnemonicParsing="false" text="Bottom" />
+						<MenuItem mnemonicParsing="false" text="Support" />
+					</items>
+				</Menu>
+				<Menu mnemonicParsing="false" text="Help">
+					<items>
+						<MenuItem mnemonicParsing="false" text="About" />
+					</items>
+				</Menu>
+			</menus>
+		</MenuBar>
+	</children>
+</AnchorPane>
