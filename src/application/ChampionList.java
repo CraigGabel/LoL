@@ -2,8 +2,10 @@
 package application;
 
 import java.util.LinkedList;
+import java.util.Map;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -11,11 +13,67 @@ import org.json.simple.parser.*;
 
 public class ChampionList
 {
-	public static LinkedList<Champion> championList;
+	public LinkedList<Champion> championList;
 
-	public void readFromJSON() throws FileNotFoundException, IOException, ParseException
+	ChampionList(boolean t) throws FileNotFoundException, IOException, ParseException
 	{
-		championList = new LinkedList<>();
+		if (t == true)
+		{
+			championList = readJSON();
+		}
+		else
+		{
+			championList = new LinkedList<>();
+		}
+	}
+
+	public boolean removeChampion(String name)
+	{
+		boolean response = false;
+
+		for (Champion champion : championList)
+		{
+			if (champion.name.equalsIgnoreCase(name))
+			{
+				championList.remove(champion);
+				response = true;
+				break;
+			}
+		}
+
+		return response;
+	}
+
+	public boolean addChampion(String name) throws FileNotFoundException, IOException, ParseException
+	{
+		boolean response = false;
+
+		for (Champion champion : championList)
+		{
+			if (champion.name.equalsIgnoreCase(name))
+			{
+				return response;
+			}
+		}
+
+		LinkedList<Champion> temp = readJSON();
+
+		for (Champion champion : temp)
+		{
+			if (champion.name.equalsIgnoreCase(name))
+			{
+				championList.add(champion);
+				response = true;
+				break;
+			}
+		}
+
+		return response;
+	}
+
+	public LinkedList<Champion> readJSON() throws FileNotFoundException, IOException, ParseException
+	{
+		LinkedList<Champion> tempList = new LinkedList<>();
 
 		// parsing file "JSONExample.json"
 		Object obj = new JSONParser().parse(new FileReader("src/application/ChampionList.json"));
@@ -40,11 +98,25 @@ public class ChampionList
 			{
 				JSONArray classArray2 = (JSONArray) classArray.get(ii);
 
-				for (int iii = 0; iii < classArray2.size(); iii++)
+				champion.championClass.add((String) classArray2.get(0));
+				champion.championSubclass.add((String) classArray2.get(1));
+
+				LinkedList<String> subclasses = new LinkedList<>();
+
+				if (champion.classes.containsKey((String) classArray2.get(0)))
 				{
-					champion.championClass.add((String) classArray2.get(0));
-					champion.championSubclass.add((String) classArray2.get(1));
+					for (String subclass : champion.classes.get((String) classArray2.get(0)))
+					{
+						subclasses.add(subclass);
+					}
+					subclasses.add((String) classArray2.get(1));
 				}
+				else
+				{
+					subclasses.add((String) classArray2.get(1));
+				}
+
+				champion.classes.put((String) classArray2.get(0), subclasses);
 			}
 
 			JSONArray roleArray = (JSONArray) temp.get("roles");
@@ -54,1414 +126,101 @@ public class ChampionList
 				champion.championRole.add((String) roleArray.get(ii));
 			}
 
-			championList.add(champion);
+			tempList.add(champion);
 		}
+
+		return tempList;
 	}
 
-	ChampionList(boolean t)
+	void writeJSON() throws IOException
 	{
-		championList = new LinkedList<>();
-	}
+//		JSONObject obj = new JSONObject();
+//		JSONArray championList = new JSONArray();
+//
+//		JSONObject champion = new JSONObject();
+//		champion.put("name", "Aatrox");
+//
+//		JSONArray classes = new JSONArray();
+//		JSONArray class1 = new JSONArray();
+//		class1.add("Fighter");
+//		class1.add("Diver");
+//		classes.add(class1);
+//		JSONArray class2 = new JSONArray();
+//		class2.add("Fighter");
+//		class2.add("Juggernaut");
+//		classes.add(class2);
+//
+//		champion.put("classes", classes);
+//
+//		JSONArray roles = new JSONArray();
+//		roles.add("Top");
+//		roles.add("Jungle");
+//		champion.put("roles", roles);
+//
+//		championList.add(champion);
+//
+//		obj.put("ChampionList", championList);
 
-	ChampionList() throws FileNotFoundException, IOException, ParseException
-	{
-		readFromJSON();
 
-//		championList = new LinkedList<>();
-//
-//		String chName;
-//		LinkedList<String> chClass;
-//		LinkedList<String> chSubclass;
-//		LinkedList<String> chRole;
-//		Champion champion;
-//
-//		// tanks
-//		// vanguards
-//		chClass = new LinkedList<>();
-//		chSubclass = new LinkedList<>();
-//		chRole = new LinkedList<>();
-//		chName = "Alister";
-//		chClass.add("Tank");
-//		chSubclass.add("Vanguard");
-//		chRole.add("Support");
-//		champion = new Champion(chName, chClass, chSubclass, chRole);
-//		championList.add(champion);
-//
-//		chClass = new LinkedList<>();
-//		chSubclass = new LinkedList<>();
-//		chRole = new LinkedList<>();
-//		chName = "Amumu";
-//		chClass.add("Tank");
-//		chSubclass.add("Vanguard");
-//		chRole.add("Support");
-//		champion = new Champion(chName, chClass, chSubclass, chRole);
-//		championList.add(champion);
-//
-//		chClass = new LinkedList<>();
-//		chSubclass = new LinkedList<>();
-//		chRole = new LinkedList<>();
-//		chName = "Gragas";
-//		chClass.add("Tank");
-//		chSubclass.add("Vanguard");
-//		chRole.add("Support");
-//		champion = new Champion(chName, chClass, chSubclass, chRole);
-//		championList.add(champion);
-//
-//		chClass = new LinkedList<>();
-//		chSubclass = new LinkedList<>();
-//		chRole = new LinkedList<>();
-//		chName = "Leona";
-//		chClass.add("Tank");
-//		chSubclass.add("Vanguard");
-//		chRole.add("Support");
-//		champion = new Champion(chName, chClass, chSubclass, chRole);
-//		championList.add(champion);
-//
-//		chClass = new LinkedList<>();
-//		chSubclass = new LinkedList<>();
-//		chRole = new LinkedList<>();
-//		chName = "Malphite";
-//		chClass.add("Tank");
-//		chSubclass.add("Vanguard");
-//		chRole.add("Support");
-//		champion = new Champion(chName, chClass, chSubclass, chRole);
-//		championList.add(champion);
-//
-//		chClass = new LinkedList<>();
-//		chSubclass = new LinkedList<>();
-//		chRole = new LinkedList<>();
-//		chName = "Maokai";
-//		chClass.add("Tank");
-//		chSubclass.add("Vanguard");
-//		chRole.add("Support");
-//		champion = new Champion(chName, chClass, chSubclass, chRole);
-//		championList.add(champion);
-//
-//		chClass = new LinkedList<>();
-//		chSubclass = new LinkedList<>();
-//		chRole = new LinkedList<>();
-//		chName = "Nautilus";
-//		chClass.add("Tank");
-//		chSubclass.add("Vanguard");
-//		chRole.add("Support");
-//		champion = new Champion(chName, chClass, chSubclass, chRole);
-//		championList.add(champion);
-//
-//		chClass = new LinkedList<>();
-//		chSubclass = new LinkedList<>();
-//		chRole = new LinkedList<>();
-//		chName = "Rammus";
-//		chClass.add("Tank");
-//		chSubclass.add("Vanguard");
-//		chRole.add("Support");
-//		champion = new Champion(chName, chClass, chSubclass, chRole);
-//		championList.add(champion);
-//
-//		chClass = new LinkedList<>();
-//		chSubclass = new LinkedList<>();
-//		chRole = new LinkedList<>();
-//		chName = "Sejuani";
-//		chClass.add("Tank");
-//		chSubclass.add("Vanguard");
-//		chRole.add("Support");
-//		champion = new Champion(chName, chClass, chSubclass, chRole);
-//		championList.add(champion);
-//
-//		chClass = new LinkedList<>();
-//		chSubclass = new LinkedList<>();
-//		chRole = new LinkedList<>();
-//		chName = "Sion";
-//		chClass.add("Tank");
-//		chSubclass.add("Vanguard");
-//		chRole.add("Support");
-//		champion = new Champion(chName, chClass, chSubclass, chRole);
-//		championList.add(champion);
-//
-//		chClass = new LinkedList<>();
-//		chSubclass = new LinkedList<>();
-//		chRole = new LinkedList<>();
-//		chName = "Zac";
-//		chClass.add("Tank");
-//		chSubclass.add("Vanguard");
-//		chRole.add("Support");
-//		champion = new Champion(chName, chClass, chSubclass, chRole);
-//		championList.add(champion);
-//
-//		// // wardens
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Braum";
-//		// chClass.add(ChampionProperties.ChampionClass.Tank);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Warden);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Galio";
-//		// chClass.add(ChampionProperties.ChampionClass.Tank);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Warden);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Nunu";
-//		// chClass.add(ChampionProperties.ChampionClass.Tank);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Warden);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Poppy";
-//		// chClass.add(ChampionProperties.ChampionClass.Tank);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Warden);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Shen";
-//		// chClass.add(ChampionProperties.ChampionClass.Tank);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Warden);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Tahm Kench";
-//		// chClass.add(ChampionProperties.ChampionClass.Tank);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Warden);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// // fighters
-//		// // juggernauts
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Darius";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Juggernaut);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Dr. Mundo";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Juggernaut);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Garen";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Juggernaut);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Illaoi";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Juggernaut);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Mordekaiser";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Juggernaut);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Nasus";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Juggernaut);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Shyvana";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Juggernaut);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Trundle";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Juggernaut);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Udyr";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Juggernaut);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Volibear";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Juggernaut);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Yorick";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Juggernaut);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// // divers
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Aatrox";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Camile";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Diana";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Elise";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Hecarim";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Irelia";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Jarvan IV";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Kled";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Lee Sin";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Olaf";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Pantheon";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Rek'Sai";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Renekton";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Rengar";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Skarner";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Vi";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Warwick";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Wukong";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Xin Zhao";
-//		// chClass.add(ChampionProperties.ChampionClass.Fighter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Diver);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// // slayers
-//		// // assassins
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Akali";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Assassin);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Ekko";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Assassin);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Evelynn";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Assassin);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Fizz";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Assassin);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Kassadin";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Assassin);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Katarina";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Assassin);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Kha'Zix";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Assassin);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Nocturne";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Assassin);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Shaco";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Assassin);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Talon";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Assassin);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Zed";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Assassin);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// // skirmishers
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Fiora";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Skirmisher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Jax";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Skirmisher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Master Yi";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Skirmisher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Riven";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Skirmisher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Tryndamere";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Skirmisher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Yasuo";
-//		// chClass.add(ChampionProperties.ChampionClass.Slayer);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Skirmisher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// // mages
-//		// // burst mages
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Ahri";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BurstMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Annie";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BurstMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Brand";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BurstMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "LeBlanc";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BurstMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Lissandra";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BurstMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Lux";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BurstMage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Artillery);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Orianna";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BurstMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Syndra";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BurstMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Twisted Fate";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BurstMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Veigar";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BurstMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// // battle mages
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Anivia";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BattleMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Aurelion Sol";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BattleMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Cassiopia";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BattleMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Karthus";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BattleMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Malzahar";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BattleMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Rumble";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BattleMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Ryze";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BattleMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Swain";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BattleMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Taliyah";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BattleMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Viktor";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BattleMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Vladimir";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.BattleMage);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// // artillery
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Jayce";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Artillery);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Vel'Koz";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Artillery);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Xerath";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Artillery);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Ziggs";
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Artillery);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// // controllers
-//		// // enchanters
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Janna";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Enchanter);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Karma";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Enchanter);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Lulu";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Enchanter);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Nami";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Enchanter);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Sona";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Enchanter);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Soraka";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Enchanter);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Taric";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chClass.add(ChampionProperties.ChampionClass.Tank);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Enchanter);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Warden);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// // catchers
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Bard";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Catcher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Blitzcrank";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Catcher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Ivern";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Catcher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Morgana";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Catcher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Rakan";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Catcher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Thresh";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Catcher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Zyra";
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Catcher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// // marksmen
-//		// // marksmen
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Ashe";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Caitlyn";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Corki";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Draven";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Ezreal";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Jhin";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chClass.add(ChampionProperties.ChampionClass.Controller);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Catcher);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Jinx";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Kalista";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Kindred";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Kog'Maw";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Lucian";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Miss Fortune";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Sivir";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Tristana";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Twitch";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Varus";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chClass.add(ChampionProperties.ChampionClass.Mage);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Artillery);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Vayne";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Xayah";
-//		// chClass.add(ChampionProperties.ChampionClass.Marksmen);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Marksmen);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// // unique
-//		// // unique
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Azir";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Cho'Gath";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Fiddlesticks";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Gangplank";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Graves";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Gnar";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chClass.add(ChampionProperties.ChampionClass.Tank);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Vanguard);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Heimerdinger";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Kayle";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Kennen";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Nidalee";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Quinn";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Singed";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Teemo";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Urgot";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
-//		//
-//		// chClass = new LinkedList<>();
-//		// chSubclass = new LinkedList<>();
-//		// chRole = new LinkedList<>();
-//		// chName = "Zilean";
-//		// chClass.add(ChampionProperties.ChampionClass.Unique);
-//		// chSubclass.add(ChampionProperties.ChampionSubclass.Unique);
-//		// chRole.add(ChampionProperties.ChampionRole.Support);
-//		// champion = new Champion(chName, chClass, chSubclass, chRole);
-//		// championList.add(champion);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+		JSONObject obj = new JSONObject();
+		JSONArray list = new JSONArray();
+
+		for (Champion champion : championList)
+		{
+			JSONObject champ = new JSONObject();
+			champ.put("name", champion.name);
+
+			JSONArray classes = new JSONArray();
+
+			for (Map.Entry<String, LinkedList<String>> entry : champion.classes.entrySet())
+			{
+				for (String string : entry.getValue())
+				{
+					JSONArray class1 = new JSONArray();
+					class1.add(entry.getKey());
+					class1.add(string);
+					classes.add(class1);
+				}
+			}
+
+			champ.put("classes", classes);
+
+			JSONArray roles = new JSONArray();
+			for (String string : champion.championRole)
+			{
+				roles.add(string);
+			}
+
+			champ.put("roles", roles);
+
+			list.add(champ);
+		}
+
+		obj.put("ChampionList", list);
+
+		// try-with-resources statement based on post comment below :)
+		try (FileWriter file = new FileWriter("src/application/test.json"))
+		{
+			file.write(obj.toJSONString());
+			System.out.println("Successfully Copied JSON Object to File...");
+			System.out.println("\nJSON Object: " + obj);
+		}
 	}
 }

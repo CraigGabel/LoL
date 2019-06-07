@@ -11,16 +11,6 @@ public class Main extends Application
 	@Override
 	public void start(Stage primaryStage) throws IOException, ParseException
 	{
-//		Parent root = FXMLLoader.load(getClass().getResource("test.fxml"));
-//        primaryStage.setTitle("test");
-//        primaryStage.setScene(new Scene(root, 800, 500));
-//        primaryStage.show();
-
-		ChampionProperties championProperties = new ChampionProperties();
-		ChampionList championList = new ChampionList();
-
-//		championList.readFromJSON();
-
 		MainScreen mainScreen = new MainScreen(primaryStage);
 	}
 

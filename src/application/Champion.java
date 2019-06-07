@@ -1,5 +1,6 @@
 package application;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -9,12 +10,14 @@ public class Champion
 	String name;
 	LinkedList<String> championClass;
 	LinkedList<String> championSubclass;
+	HashMap<String, LinkedList<String>> classes;
 	LinkedList<String> championRole;
 
 	Champion()
 	{
 		championClass = new LinkedList<>();
 		championSubclass = new LinkedList<>();
+		classes = new HashMap<>();
 		championRole = new LinkedList<>();
 	}
 
@@ -23,6 +26,13 @@ public class Champion
 		name = n;
 		championClass = cc;
 		championSubclass = csc;
+		championRole = cr;
+	}
+
+	Champion(String n, HashMap<String, LinkedList<String>> cc, LinkedList<String> cr)
+	{
+		name = n;
+		classes = cc;
 		championRole = cr;
 	}
 

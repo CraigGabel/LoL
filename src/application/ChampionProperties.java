@@ -5,7 +5,7 @@ import java.util.LinkedList;
 
 public class ChampionProperties
 {
-	public static enum ChampionRole
+	public enum ChampionRole
 	{
 		Top,
 		Jungle,
@@ -14,12 +14,12 @@ public class ChampionProperties
 		Support
 	}
 
-	public static enum ChampionClass
+	public enum ChampionClass
 	{
 		Tank, Fighter, Slayer, Mage, Controller, Marksmen, Unique
 	}
 
-	public static enum ChampionSubclass
+	public enum ChampionSubclass
 	{
 		// tanks
 		Vanguard, Warden,
@@ -43,46 +43,57 @@ public class ChampionProperties
 		Specialist
 	}
 
+	ChampionClass championClass;
+	ChampionSubclass subclass;
+	ChampionRole role;
+
 	public static HashMap<ChampionClass, LinkedList<ChampionSubclass>> classMap;
 
-	ChampionProperties()
+	public HashMap<ChampionClass, LinkedList<ChampionSubclass>> makeHashMap()
 	{
-		classMap = new HashMap<>();
+		HashMap<ChampionClass, LinkedList<ChampionSubclass>> tempMap = new HashMap<>();
 
 		LinkedList<ChampionSubclass> championSubclasses;
 
 		championSubclasses = new LinkedList<>();
 		championSubclasses.add(ChampionSubclass.Vanguard);
 		championSubclasses.add(ChampionSubclass.Warden);
-		classMap.put(ChampionClass.Tank, championSubclasses);
+		tempMap.put(ChampionClass.Tank, championSubclasses);
 
 		championSubclasses = new LinkedList<>();
 		championSubclasses.add(ChampionSubclass.Juggernaut);
 		championSubclasses.add(ChampionSubclass.Diver);
-		classMap.put(ChampionClass.Fighter, championSubclasses);
+		tempMap.put(ChampionClass.Fighter, championSubclasses);
 
 		championSubclasses = new LinkedList<>();
 		championSubclasses.add(ChampionSubclass.Assassin);
 		championSubclasses.add(ChampionSubclass.Skirmisher);
-		classMap.put(ChampionClass.Slayer, championSubclasses);
+		tempMap.put(ChampionClass.Slayer, championSubclasses);
 
 		championSubclasses = new LinkedList<>();
 		championSubclasses.add(ChampionSubclass.BurstMage);
 		championSubclasses.add(ChampionSubclass.BattleMage);
 		championSubclasses.add(ChampionSubclass.Artillery);
-		classMap.put(ChampionClass.Mage, championSubclasses);
+		tempMap.put(ChampionClass.Mage, championSubclasses);
 
 		championSubclasses = new LinkedList<>();
 		championSubclasses.add(ChampionSubclass.Enchanter);
 		championSubclasses.add(ChampionSubclass.Catcher);
-		classMap.put(ChampionClass.Controller, championSubclasses);
+		tempMap.put(ChampionClass.Controller, championSubclasses);
 
 		championSubclasses = new LinkedList<>();
 		championSubclasses.add(ChampionSubclass.Marksmen);
-		classMap.put(ChampionClass.Marksmen, championSubclasses);
+		tempMap.put(ChampionClass.Marksmen, championSubclasses);
 
 		championSubclasses = new LinkedList<>();
 		championSubclasses.add(ChampionSubclass.Specialist);
-		classMap.put(ChampionClass.Unique, championSubclasses);
+		tempMap.put(ChampionClass.Unique, championSubclasses);
+
+		return tempMap;
+	}
+
+	ChampionProperties()
+	{
+		classMap = makeHashMap();
 	}
 }
