@@ -25,6 +25,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -255,32 +256,42 @@ public class MainScreen
 		};
 	}
 
-	private BorderPane buildScreen()
+	private HBox buildScreen()
 	{
 		// top pane - menubar
-		VBox topPane = new VBox();
-		topPane.setPadding(new Insets(0, 0, 0, 0));
-		topPane.getChildren().addAll(mainMenu());
+		VBox menuPane = new VBox();
+		menuPane.setPadding(new Insets(0, 0, 0, 0));
+		menuPane.getChildren().addAll(mainMenu());
 
 		// center pane - champion table
-		VBox centerPane = new VBox();
-		centerPane.setPadding(new Insets(0, 0, 0, 0));
+		VBox champTable = new VBox();
+		champTable.setPadding(new Insets(0, 0, 0, 0));
+		VBox champTable2 = new VBox();
+		champTable2.setPadding(new Insets(0, 0, 0, 0));
 
 		ArrayList<Champion> myList = new ArrayList<Champion>(ChampionList.championList);
-		centerPane.getChildren().addAll(championTable(FXCollections.observableArrayList(myList)));
+		champTable.getChildren().addAll(championTable(FXCollections.observableArrayList(myList)));
+		champTable2.getChildren().addAll(championTable(FXCollections.observableArrayList(myList)));
 
 		// left pane - filters
 		// GridPane leftPane = new GridPane();
-		GridPane leftPane = championFilters();
+		GridPane champFilters = championFilters();
+		GridPane champFilters2 = championFilters();
 
-		// main layout
-		BorderPane borderPane = new BorderPane();
-
-		borderPane.setTop(topPane);
-		borderPane.setCenter(centerPane);
-		borderPane.setLeft(leftPane);
-
-		return borderPane;
+//		// main layout
+//		BorderPane borderPane = new BorderPane();
+//
+//		borderPane.setTop(topPane);
+//		borderPane.setCenter(centerPane);
+//		borderPane.setLeft(leftPane);
+//
+//		return borderPane;
+		
+		HBox mainLayout = new HBox();
+		
+		mainLayout.getChildren().addAll(champFilters, champTable, champTable2, champFilters2);
+		
+		return mainLayout;
 	}
 
 	private GridPane championFilters()
