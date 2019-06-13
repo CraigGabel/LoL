@@ -1,0 +1,7 @@
+table - show all classes & roles, not just the first, or remove it and let it be handled just by filters?
+table - allow modification, should modify the champList
+table - buttons, add to myChamps, remove from myChamps
+
+myChamps
+	will have unique definitions for roles
+	up/down arrow for how i did in recent games

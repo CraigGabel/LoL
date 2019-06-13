@@ -11,17 +11,18 @@ public class Champion
 	LinkedList<String> championClass;
 	LinkedList<String> championSubclass;
 	HashMap<String, LinkedList<String>> classes;
-	LinkedList<String> championRole;
+//	LinkedList<String> championRole;
+	String championRole;
 
 	Champion()
 	{
 		championClass = new LinkedList<>();
 		championSubclass = new LinkedList<>();
 		classes = new HashMap<>();
-		championRole = new LinkedList<>();
+		championRole = new String();
 	}
 
-	Champion(String n, LinkedList<String> cc, LinkedList<String> csc, LinkedList<String> cr)
+	Champion(String n, LinkedList<String> cc, LinkedList<String> csc, String cr)
 	{
 		name = n;
 		championClass = cc;
@@ -29,7 +30,7 @@ public class Champion
 		championRole = cr;
 	}
 
-	Champion(String n, HashMap<String, LinkedList<String>> cc, LinkedList<String> cr)
+	Champion(String n, HashMap<String, LinkedList<String>> cc, String cr)
 	{
 		name = n;
 		classes = cc;
@@ -53,6 +54,6 @@ public class Champion
 
 	public StringProperty championRoleProperty()
 	{
-		return new SimpleStringProperty((String) championRole.getFirst());
+		return new SimpleStringProperty((String) championRole);
 	}
 }

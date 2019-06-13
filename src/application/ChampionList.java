@@ -13,13 +13,17 @@ import org.json.simple.parser.*;
 
 public class ChampionList
 {
+	String defaultList = "src/application/ChampionList2.json";
+	String listFile;
 	public LinkedList<Champion> championList;
 
-	ChampionList(boolean t) throws FileNotFoundException, IOException, ParseException
+	ChampionList(boolean t, String customFile) throws FileNotFoundException, IOException, ParseException
 	{
+		listFile = customFile;
+		
 		if (t == true)
 		{
-			championList = readJSON();
+			championList = readJSON(listFile);
 		}
 		else
 		{
@@ -56,7 +60,7 @@ public class ChampionList
 			}
 		}
 
-		LinkedList<Champion> temp = readJSON();
+		LinkedList<Champion> temp = readJSON(defaultList);
 
 		for (Champion champion : temp)
 		{
@@ -71,12 +75,12 @@ public class ChampionList
 		return response;
 	}
 
-	public LinkedList<Champion> readJSON() throws FileNotFoundException, IOException, ParseException
+	public LinkedList<Champion> readJSON(String file) throws FileNotFoundException, IOException, ParseException
 	{
 		LinkedList<Champion> tempList = new LinkedList<>();
 
 		// parsing file "JSONExample.json"
-		Object obj = new JSONParser().parse(new FileReader("src/application/ChampionList.json"));
+		Object obj = new JSONParser().parse(new FileReader(file));
 
 		// typecasting obj to JSONObject
 		JSONObject jo = (JSONObject) obj;
@@ -119,12 +123,14 @@ public class ChampionList
 				champion.classes.put((String) classArray2.get(0), subclasses);
 			}
 
-			JSONArray roleArray = (JSONArray) temp.get("roles");
-
-			for (int ii = 0; ii < roleArray.size(); ii++)
-			{
-				champion.championRole.add((String) roleArray.get(ii));
-			}
+//			JSONArray roleArray = (JSONArray) temp.get("roles");
+//
+//			for (int ii = 0; ii < roleArray.size(); ii++)
+//			{
+//				champion.championRole.add((String) roleArray.get(ii));
+//			}
+			
+			champion.championRole = (String) temp.get("roles");
 
 			tempList.add(champion);
 		}
@@ -134,51 +140,6 @@ public class ChampionList
 
 	void writeJSON() throws IOException
 	{
-//		JSONObject obj = new JSONObject();
-//		JSONArray championList = new JSONArray();
-//
-//		JSONObject champion = new JSONObject();
-//		champion.put("name", "Aatrox");
-//
-//		JSONArray classes = new JSONArray();
-//		JSONArray class1 = new JSONArray();
-//		class1.add("Fighter");
-//		class1.add("Diver");
-//		classes.add(class1);
-//		JSONArray class2 = new JSONArray();
-//		class2.add("Fighter");
-//		class2.add("Juggernaut");
-//		classes.add(class2);
-//
-//		champion.put("classes", classes);
-//
-//		JSONArray roles = new JSONArray();
-//		roles.add("Top");
-//		roles.add("Jungle");
-//		champion.put("roles", roles);
-//
-//		championList.add(champion);
-//
-//		obj.put("ChampionList", championList);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 		JSONObject obj = new JSONObject();
 		JSONArray list = new JSONArray();
 
@@ -202,13 +163,15 @@ public class ChampionList
 
 			champ.put("classes", classes);
 
-			JSONArray roles = new JSONArray();
-			for (String string : champion.championRole)
-			{
-				roles.add(string);
-			}
-
-			champ.put("roles", roles);
+//			JSONArray roles = new JSONArray();
+//			for (String string : champion.championRole)
+//			{
+//				roles.add(string);
+//			}
+//
+//			champ.put("roles", roles);
+			
+			champ.put("roles", champion.championRole);
 
 			list.add(champ);
 		}
@@ -216,11 +179,11 @@ public class ChampionList
 		obj.put("ChampionList", list);
 
 		// try-with-resources statement based on post comment below :)
-		try (FileWriter file = new FileWriter("src/application/test.json"))
+		try (FileWriter file = new FileWriter(listFile))
 		{
 			file.write(obj.toJSONString());
-			System.out.println("Successfully Copied JSON Object to File...");
-			System.out.println("\nJSON Object: " + obj);
+//			System.out.println("Successfully Copied JSON Object to File...");
+//			System.out.println("\nJSON Object: " + obj);
 		}
 	}
 }
