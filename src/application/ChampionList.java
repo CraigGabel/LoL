@@ -13,7 +13,7 @@ import org.json.simple.parser.*;
 
 public class ChampionList
 {
-	String defaultList = "src/application/ChampionList2.json";
+	String defaultList = "allChamps.json";
 	String listFile;
 	public LinkedList<Champion> championList;
 
@@ -192,6 +192,7 @@ public class ChampionList
 			file.write(obj.toJSONString());
 //			System.out.println("Successfully Copied JSON Object to File...");
 //			System.out.println("\nJSON Object: " + obj);
+			file.close();
 		}
 	}
 }

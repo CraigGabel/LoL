@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 public class ChampionProperties
-{
+{	
 	public enum ChampionRole
 	{
 		Top,
@@ -18,6 +18,7 @@ public class ChampionProperties
 	{
 		Staple,
 		Solid,
+		Kinda,
 		Testing
 	}
 

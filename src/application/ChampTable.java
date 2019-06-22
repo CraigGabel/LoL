@@ -124,7 +124,8 @@ public class ChampTable
 			}
 		}
 		
-		if (tierFilters.get(0).isSelected() == true)
+		
+		if ((hideExtraTableColumns == true) || (tierFilters.get(0).isSelected() == true))
 		{
 			// start with a full list
 			for (Champion champion : championList.championList)
@@ -470,6 +471,7 @@ public class ChampTable
 					{
 						e.printStackTrace();
 					}
+					addChampTextField.setText("");
 				}
 				else if (button.getText().equalsIgnoreCase("remove"))
 				{
@@ -483,6 +485,7 @@ public class ChampTable
 					{
 						e.printStackTrace();
 					}
+					removeChampTextField.setText("");
 				}
 			}
 		};
