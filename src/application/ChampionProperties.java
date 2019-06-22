@@ -13,6 +13,13 @@ public class ChampionProperties
 		Bottom,
 		Support
 	}
+	
+	public enum ChampionTier
+	{
+		Staple,
+		Solid,
+		Testing
+	}
 
 	public enum ChampionClass
 	{

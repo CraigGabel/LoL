@@ -131,6 +131,10 @@ public class ChampionList
 //			}
 			
 			champion.championRole = (String) temp.get("roles");
+			
+			champion.tier = (String) temp.get("tier");
+			
+			champion.comments = (String) temp.get("comments");
 
 			tempList.add(champion);
 		}
@@ -172,6 +176,10 @@ public class ChampionList
 //			champ.put("roles", roles);
 			
 			champ.put("roles", champion.championRole);
+			
+			champ.put("tier", champion.tier);
+
+			champ.put("comments", champion.comments);
 
 			list.add(champ);
 		}

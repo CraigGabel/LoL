@@ -20,8 +20,8 @@ public class MainScreen
 	{
 		BorderPane borderPane = new BorderPane();
 
-		ChampTable defaultChamps = new ChampTable("src/application/ChampionList2.json", true);
-		ChampTable myChamps = new ChampTable("src/application/test.json", false);
+		ChampTable defaultChamps = new ChampTable("src/application/ChampionList2 - new.json", true, true);
+		ChampTable myChamps = new ChampTable("src/application/test.json", false, false);
 
 		borderPane.setLeft(defaultChamps.getChampionTable());
 		borderPane.setRight(myChamps.getChampionTable());

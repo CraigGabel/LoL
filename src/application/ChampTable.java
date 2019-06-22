@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import org.json.simple.parser.ParseException;
 import application.ChampionProperties.ChampionRole;
 import application.ChampionProperties.ChampionSubclass;
+import application.ChampionProperties.ChampionTier;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -29,6 +30,7 @@ public class ChampTable
 	TableView<Champion>		table;
 	LinkedList<CheckBox>	classFilters;
 	LinkedList<CheckBox>	roleFilters;
+	LinkedList<CheckBox>	tierFilters;
 	ChampionList			championList;
 	ChampionProperties		championProperties;
 	TextField				addChampTextField;
@@ -36,21 +38,25 @@ public class ChampTable
 	TextField				removeChampTextField;
 	Button					removeChampButton;
 	boolean					hideControls;
+	boolean					hideExtraTableColumns;
 
-	public ChampTable(String file, boolean hide) throws FileNotFoundException, IOException, ParseException
+	public ChampTable(String file, boolean hideC, boolean hideColumns) throws FileNotFoundException, IOException, ParseException
 	{
 		table = new TableView<>();
 		classFilters = new LinkedList<>();
 		roleFilters = new LinkedList<>();
+		tierFilters = new LinkedList<>();
 		championList = new ChampionList(true, file);
 		championProperties = new ChampionProperties();
-		hideControls = hide;
+		hideControls = hideC;
+		hideExtraTableColumns = hideColumns;
 	}
 	
 	public void updateTable()
 	{
-		ArrayList<Champion> chList = new ArrayList<>();
-		ArrayList<Champion> chList2 = new ArrayList<>();
+		ArrayList<Champion> classList = new ArrayList<>();
+		ArrayList<Champion> roleList = new ArrayList<>();
+		ArrayList<Champion> tierList = new ArrayList<>();
 		ArrayList<Champion> chListTot = new ArrayList<>();
 
 		if (classFilters.get(0).isSelected() == true)
@@ -60,7 +66,7 @@ public class ChampTable
 			{
 				if (true)
 				{
-					chList.add(champion);
+					classList.add(champion);
 				}
 			}
 		}
@@ -76,9 +82,9 @@ public class ChampTable
 						{
 							if (scs.equalsIgnoreCase(chb.getText()))
 							{
-								if (chList.contains(champion) == false)
+								if (classList.contains(champion) == false)
 								{
-									chList.add(champion);
+									classList.add(champion);
 								}
 							}
 						}
@@ -94,7 +100,7 @@ public class ChampTable
 			{
 				if (true)
 				{
-					chList2.add(champion);
+					roleList.add(champion);
 				}
 			}
 		}
@@ -106,22 +112,42 @@ public class ChampTable
 				{
 					if (chb.isSelected() == true)
 					{
-//						for (String scs : champion.championRole)
-//						{
-//							if (scs.equalsIgnoreCase(chb.getText()))
-//							{
-//								if (chList2.contains(champion) == false)
-//								{
-//									chList2.add(champion);
-//								}
-//							}
-//						}
-
 						if (champion.championRole.contains(chb.getText()))
 						{
-							if (chList2.contains(champion) == false)
+							if (roleList.contains(champion) == false)
 							{
-								chList2.add(champion);
+								roleList.add(champion);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		if (tierFilters.get(0).isSelected() == true)
+		{
+			// start with a full list
+			for (Champion champion : championList.championList)
+			{
+				if (true)
+				{
+					tierList.add(champion);
+				}
+			}
+		}
+		else
+		{
+			for (Champion champion : championList.championList)
+			{
+				for (CheckBox chb : tierFilters)
+				{
+					if (chb.isSelected() == true)
+					{
+						if (champion.tier.contains(chb.getText()))
+						{
+							if (tierList.contains(champion) == false)
+							{
+								tierList.add(champion);
 							}
 						}
 					}
@@ -129,9 +155,9 @@ public class ChampTable
 			}
 		}
 
-		for (Champion champion : chList)
+		for (Champion champion : classList)
 		{
-			if (chList2.contains(champion))
+			if ((roleList.contains(champion)) && (tierList.contains(champion)))
 			{
 				chListTot.add(champion);
 			}
@@ -199,6 +225,32 @@ public class ChampTable
 						}
 					}
 				}
+				
+				for (CheckBox chb : tierFilters)
+				{
+					if (checkBox.equals(chb))
+					{
+						if (chb.getText().equalsIgnoreCase("All"))
+						{
+							if (checkBox.isSelected() == true)
+							{
+								for (CheckBox chb2 : tierFilters)
+								{
+									if (chb2.getText().equalsIgnoreCase("All") == false)
+										chb2.setSelected(false);
+								}
+							}
+							else
+							{
+								checkBox.setSelected(true);
+							}
+						}
+						else
+						{
+							tierFilters.get(0).setSelected(false);
+						}
+					}
+				}
 
 				updateTable();
 			}
@@ -258,6 +310,31 @@ public class ChampTable
 			GridPane.setMargin(filterCheckBox, new Insets(0, 0, 0, 0));
 			gridPane.getChildren().add(filterCheckBox);
 		}
+		
+		if (hideExtraTableColumns == false)
+		{
+			rowIndex = 0;
+	
+			filterCheckBox = new CheckBox();
+			tierFilters.add(filterCheckBox);
+			filterCheckBox.setSelected(true);
+			filterCheckBox.setText("All");
+			filterCheckBox.setOnAction(action);
+			GridPane.setConstraints(filterCheckBox, 2, rowIndex++);
+			GridPane.setMargin(filterCheckBox, new Insets(0, 0, 0, 0));
+			gridPane.getChildren().add(filterCheckBox);
+	
+			for (ChampionProperties.ChampionTier tier : ChampionTier.values())
+			{
+				filterCheckBox = new CheckBox();
+				tierFilters.add(filterCheckBox);
+				filterCheckBox.setText(tier.name());
+				filterCheckBox.setOnAction(action);
+				GridPane.setConstraints(filterCheckBox, 2, rowIndex++);
+				GridPane.setMargin(filterCheckBox, new Insets(0, 0, 0, 0));
+				gridPane.getChildren().add(filterCheckBox);
+			}
+		}
 
 		return gridPane;
 	}
@@ -271,6 +348,8 @@ public class ChampTable
 		TableColumn<Champion, String> chClass = new TableColumn<Champion, String>("Class");
 		TableColumn<Champion, String> chSubclass = new TableColumn<Champion, String>("Subclass");
 		TableColumn<Champion, String> chRole = new TableColumn<Champion, String>("Role");
+		TableColumn<Champion, String> chTier = new TableColumn<Champion, String>("Tier");
+		TableColumn<Champion, String> chComments = new TableColumn<Champion, String>("Comments");
 
 		// Defines how to fill data for each cell.
 		// Get value from property of UserAccount. .
@@ -299,6 +378,49 @@ public class ChampTable
 				}
 			}
 		});
+		
+		if (hideExtraTableColumns == false)
+		{
+			chTier.setCellValueFactory(new PropertyValueFactory<>("tier"));
+			chTier.setCellFactory(TextFieldTableCell.forTableColumn());
+			chTier.setOnEditCommit(new EventHandler<CellEditEvent<Champion, String>>()
+			{
+				@Override
+				public void handle(CellEditEvent<Champion, String> t)
+				{
+					((Champion) t.getTableView().getItems().get(t.getTablePosition().getRow())).tier = t.getNewValue();
+					try
+					{
+						championList.writeJSON();
+					}
+					catch (IOException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+			
+			chComments.setCellValueFactory(new PropertyValueFactory<>("comments"));
+			chComments.setCellFactory(TextFieldTableCell.forTableColumn());
+			chComments.setOnEditCommit(new EventHandler<CellEditEvent<Champion, String>>()
+			{
+				@Override
+				public void handle(CellEditEvent<Champion, String> t)
+				{
+					((Champion) t.getTableView().getItems().get(t.getTablePosition().getRow())).comments = t.getNewValue();
+					try
+					{
+						championList.writeJSON();
+					}
+					catch (IOException e)
+					{
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			});
+		}
 
 		// Set Sort type for userName column
 		chName.setSortType(TableColumn.SortType.DESCENDING);
@@ -313,7 +435,10 @@ public class ChampTable
 		
 		table.setEditable(true);
 
-		table.getColumns().addAll(chName, chClass, chSubclass, chRole);
+		if (hideExtraTableColumns == false)
+			table.getColumns().addAll(chName, chClass, chSubclass, chRole, chTier, chComments);
+		else 
+			table.getColumns().addAll(chName, chClass, chSubclass, chRole);
 		
 //		System.out.println(table.getPrefWidth());
 //		table.setPrefWidth(chName.getWidth() + chClass.getWidth() + chSubclass.getWidth() + chRole.getWidth());
