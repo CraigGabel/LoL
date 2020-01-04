@@ -8,11 +8,11 @@ You will need to install JavaFX to run this code.
 
 to install JavaFX in Eclipse:
 
-Go to help menu -> install new software…
-Top right of the window click on “add”
-Name is not important, but I call it “oxygen”
-Location is http://download.eclipse.org/releases/oxygen/
-Select this new repository from the drop down menu in the “install new software” window
-Expand “general purpose tools”
-Select "e(fx)lipse" (or something similar...I'm working from memory here :) )
-Press “next” and follow instructions to install
+1)	Go to help menu -> install new software…
+2)	Top right of the window click on “add”
+3)	Name is not important, but I call it “oxygen”
+4)	Location is http://download.eclipse.org/releases/oxygen/
+5)	Select this new repository from the drop down menu in the “install new software” window
+6)	Expand “general purpose tools”
+7)	Select “JavaFX”
+8)	Press “next” and follow instructions to install
