@@ -14,5 +14,5 @@ to install JavaFX in Eclipse:
 4)	Location is http://download.eclipse.org/releases/oxygen/
 5)	Select this new repository from the drop down menu in the “install new software” window
 6)	Expand “general purpose tools”
-7)	Select “JavaFX”
+7)	Select "e(fx)lipse" (or something similar...I'm working from memory here :) )
 8)	Press “next” and follow instructions to install
