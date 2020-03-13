@@ -20,3 +20,5 @@ to install JavaFX in Eclipse:
 6)	Expand “general purpose tools”
 7)	Select "e(fx)lipse" (or something similar...I'm working from memory here :) )
 8)	Press “next” and follow instructions to install
+
+Screenshot: https://imgur.com/a/eAKk4qJ
