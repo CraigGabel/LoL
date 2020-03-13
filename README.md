@@ -4,7 +4,11 @@ There are ~140 playable characters (champions) in LoL sorted into various flavor
 
 Maybe not super useful for other people, but it's been helpful for me.
 
-You will need to install JavaFX to run this code.
+Execute program.jar to run code.
+
+myChamps.json is where user data is saved. It is currently populated with my preferences.  You can clear/modify the file with a text editor if you want to start fresh.
+
+You will need to install JavaFX to modify this code.
 
 to install JavaFX in Eclipse:
 
